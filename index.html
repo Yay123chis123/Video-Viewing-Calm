@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RelaxingCO</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,sans-serif;}
+body{
+    color:white;
+    min-height:100vh;
+    overflow-x:hidden;
+    transition:background 1s ease;
+}
+.header{
+    padding:25px;
+    text-align:center;
+    font-size:32px;
+    font-weight:700;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(12px);
+}
+.plans{
+    display:flex;
+    gap:15px;
+    justify-content:center;
+    padding:20px;
+    flex-wrap:wrap;
+}
+.plan{
+    background:rgba(255,255,255,0.08);
+    padding:15px 25px;
+    border-radius:16px;
+    text-align:center;
+    min-width:170px;
+}
+.free{border:2px solid #22c55e;}
+.plus{border:2px solid #f59e0b;}
+.active{transform:scale(1.05);}
+.video-section{padding:25px;max-width:900px;margin:auto;}
+.video-card{
+    background:rgba(255,255,255,0.06);
+    border-radius:20px;
+    padding:20px;
+    margin-top:20px;
+}
+.video-title{
+    font-size:24px;
+    margin-bottom:15px;
+    font-weight:600;
+}
+iframe{
+    width:100%;
+    height:500px;
+    border:none;
+    border-radius:16px;
+}
+.unlock-box{
+    margin-top:20px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+input{
+    flex:1;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+}
+button{
+    padding:14px 20px;
+    border:none;
+    border-radius:12px;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+}
+.unlock-btn{background:#f59e0b;}
+.cancel-btn{
+    background:#ef4444;
+    margin-top:15px;
+    display:none;
+    width:100%;
+}
+.message{margin-top:10px;font-size:14px;}
+.extra-pages{
+    margin-top:20px;
+    padding:15px;
+    background:rgba(255,255,255,0.05);
+    border-radius:16px;
+    display:none;
+}
+.particle{
+    position:fixed;
+    top:-20px;
+    font-size:24px;
+    animation:fall linear infinite;
+    pointer-events:none;
+}
+@keyframes fall{
+    to{
+        transform:translateY(110vh) rotate(360deg);
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="header">🌙 RelaxingCO</div>
+
+<div class="plans">
+    <div class="plan free" id="freePlan">
+        <h3>Free Plan</h3>
+        <p>Watch relaxing videos free</p>
+    </div>
+    <div class="plan plus" id="plusPlan">
+        <h3>Plus Plan</h3>
+        <p>Locked</p>
+    </div>
+</div>
+
+<div class="video-section">
+    <div class="video-card">
+        <div class="video-title">RelaxingCO1</div>
+
+        <div id="videoContainer">
+            <iframe src="https://drive.google.com/file/d/11dWNNqLJSK8W8Bea2TClmI5se8wM5m0p/preview"></iframe>
+        </div>
+
+        <div class="unlock-box" id="unlockBox">
+            <input id="plusCode" placeholder="Enter Plus Code">
+            <button class="unlock-btn" onclick="unlockPlus()">Unlock Plus</button>
+        </div>
+
+        <button class="cancel-btn" id="cancelBtn" onclick="cancelSubscription()">
+            Cancel Subscription
+        </button>
+
+        <div class="message" id="message"></div>
+
+        <div class="extra-pages" id="extraPages">
+            <h4>Plus Features Unlocked:</h4>
+            <ul>
+                <li>1080p 60FPS RelaxingCO1</li>
+                <li>Better Homepage</li>
+                <li>Extra Pages</li>
+                <li>Future Premium Videos</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+const themes = [
+    {
+        bg:"linear-gradient(135deg,#ff9a9e,#fad0c4)",
+        emoji:"🌸"
+    },
+    {
+        bg:"linear-gradient(135deg,#f6d365,#fda085)",
+        emoji:"☀️"
+    },
+    {
+        bg:"linear-gradient(135deg,#c79081,#dfa579)",
+        emoji:"🍂"
+    },
+    {
+        bg:"linear-gradient(135deg,#89f7fe,#66a6ff)",
+        emoji:"❄️"
+    }
+];
+
+window.onload = function(){
+    // Seasonal Theme Rotation
+    const randomTheme = themes[Math.floor(Math.random()*themes.length)];
+    document.body.style.background = randomTheme.bg;
+
+    for(let i=0;i<15;i++){
+        const particle = document.createElement("div");
+        particle.className = "particle";
+        particle.textContent = randomTheme.emoji;
+        particle.style.left = Math.random()*100+"vw";
+        particle.style.animationDuration = (5+Math.random()*8)+"s";
+        particle.style.fontSize = (18+Math.random()*18)+"px";
+        document.body.appendChild(particle);
+    }
+
+    if(localStorage.getItem('plusUnlocked') === 'true'){
+        activatePlus(true);
+    } else {
+        activateFree(true);
+    }
+}
+
+function unlockPlus(){
+    const code = document.getElementById("plusCode").value.trim();
+    const msg = document.getElementById("message");
+
+    if(code === "Sub2AYYSN"){
+        localStorage.setItem('plusUnlocked','true');
+        activatePlus();
+        msg.style.color="#22c55e";
+        msg.textContent="Plus Unlocked!";
+    } else {
+        msg.style.color="#ef4444";
+        msg.textContent="Invalid Plus Code.";
+    }
+}
+
+function activatePlus(skipMsg=false){
+    document.getElementById("plusPlan").classList.add("active");
+    document.getElementById("freePlan").classList.remove("active");
+
+    document.getElementById("videoContainer").innerHTML =
+    '<iframe src="https://drive.google.com/file/d/1c6ZWQaTHVpHnIGwfYTQiN2JYWAGNHro0/preview"></iframe>';
+
+    document.getElementById("extraPages").style.display="block";
+    document.getElementById("unlockBox").style.display="none";
+    document.getElementById("cancelBtn").style.display="block";
+}
+
+function cancelSubscription(){
+    const confirmed = confirm("Are you sure you want to cancel your Plus subscription?");
+    if(!confirmed) return;
+
+    localStorage.removeItem('plusUnlocked');
+    activateFree();
+
+    const msg = document.getElementById("message");
+    msg.style.color="#ef4444";
+    msg.textContent="Subscription Cancelled.";
+}
+
+function activateFree(){
+    document.getElementById("freePlan").classList.add("active");
+    document.getElementById("plusPlan").classList.remove("active");
+
+    document.getElementById("videoContainer").innerHTML =
+    '<iframe src="https://drive.google.com/file/d/11dWNNqLJSK8W8Bea2TClmI5se8wM5m0p/preview"></iframe>';
+
+    document.getElementById("extraPages").style.display="none";
+    document.getElementById("unlockBox").style.display="flex";
+    document.getElementById("cancelBtn").style.display="none";
+}
+</script>
+
+</body>
+</html>
